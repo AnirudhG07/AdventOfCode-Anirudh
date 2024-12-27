@@ -43,15 +43,18 @@ for rule in input.split("\n"):
     else:
         updates.append(list(map(int, rule.split(","))))
 
-## Part 1
-def part_1(rules, updates):
-    wrong_updates = []
-    def check(x, y):
-        if x in rules:
-            if y in rules[x]:
-                return True
-        return False
+def check(x, y):
+    """
+    If True, then x has to be placed before y
+    """
+    if x in rules:
+        if y in rules[x]:
+            return True
+    return False
 
+## Part 1
+def part_1(updates):
+    wrong_updates = []
     for update in updates:
         for i in range(len(update) - 1):
             for j in range(i + 1, len(update)):
@@ -70,9 +73,29 @@ def sum_middles(wrong_updates):
         sum += update[middle]
     return sum
 
-print(sum_middles(part_1(rules, updates)))
+print(sum_middles(part_1(updates)))
 
-def part_2(rules, updates):
-    wrong_updates = part_1(rules, updates)
+def selection_sort(array):
+    for i in range(len(array)):
+        min_index = i
+        for j in range(i + 1, len(array)):
+            if check(array[j],array[min_index]):
+                min_index = j
+        array[i], array[min_index] = array[min_index], array[i]
+    return array
 
+def sum_middles_2(given_updates):
+    sum = 0
+    for update in given_updates:
+        middle = len(update) // 2
+        sum += update[middle]
+    return sum
+
+def part_2(updates):
+    wrong_updates = part_1(updates)
+    for i in range(len(wrong_updates)):
+        wrong_updates[i] = selection_sort(wrong_updates[i])
+    return wrong_updates
+
+print(sum_middles_2(part_2(updates)))
 
